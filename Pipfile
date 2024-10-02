@@ -1,0 +1,10 @@
+[[source]]
+url = "https://mypath.one"
+verify_ssl = true
+name = "mypath"
+ 
+[packages]
+fastapi = "*"
+ 
+[requires]
+python_version = "3.12"
