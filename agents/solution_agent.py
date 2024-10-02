@@ -15,7 +15,7 @@ class SolutionAgent:
         # Load the solution prompt from file 
         self.solution_prompt_template = load_prompt_from_file("prompts/solution_prompt.txt")
 
-    def run(self, user_message, analyzer_output, planner_output, shared_memory): # Add shared_memory
+    def run(self, user_message, analyzer_output, shared_memory): # Add shared_memory
         """Generates a solution based on the analysis and plan."""
 
         # Access chat history and user profile 
@@ -26,7 +26,7 @@ class SolutionAgent:
         llama_prompt = self.solution_prompt_template.format(
             user_message=user_message,
             analyzer_output=analyzer_output,
-            planner_output=planner_output,
+            planner_output="",
             chat_history=chat_history,
             user_profile=user_profile
         )

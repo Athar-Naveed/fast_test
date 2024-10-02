@@ -101,12 +101,12 @@ async def plan(user_id: str, analyzer_output: str, shared_memory: dict,llama_llm
     return {"planner_output": planner_output, "shared_memory": shared_memory}
 
 
-async def solution(user_id: str, prompt: str, analyzer_output: str, planner_output: str, shared_memory: dict,llama_llm):
+async def solution(user_id: str, prompt: str, analyzer_output: str, shared_memory: dict,llama_llm):
     from agents.solution_agent import SolutionAgent
     solution_agent = SolutionAgent(llama_llm, shared_memory, user_id, "user_data")
 
     # Generate the solution
-    solution_output = solution_agent.run(prompt, analyzer_output, planner_output, shared_memory)
+    solution_output = solution_agent.run(prompt, analyzer_output, shared_memory)
     return {"solution_output": solution_output, "shared_memory": shared_memory}
 
 
@@ -150,17 +150,17 @@ async def orchestrate_chat(user_id: str, prompt: str):
     full_internal_dialogue += f"### Input Agent\n{input_response['input_agent_output']}\n\n"
 
     # Step 2: Analyzer Agent
-    analyze_response = await analyze(user_id, prompt, shared_memory,llama_llm)
-    analyzer_output = analyze_response["analyzer_output"]
-    full_internal_dialogue += f"### Analyzer Agent\n{analyzer_output}\n\n"
+    # analyze_response = await analyze(user_id, prompt, shared_memory,llama_llm)
+    # analyzer_output = analyze_response["analyzer_output"]
+    # full_internal_dialogue += f"### Analyzer Agent\n{analyzer_output}\n\n"
 
     # Step 3: Planner Agent
-    plan_response = await plan(user_id, analyzer_output, shared_memory,llama_llm)
-    planner_output = plan_response["planner_output"]
-    full_internal_dialogue += f"### Planner Agent\n{planner_output}\n\n"
+    # plan_response = await plan(user_id, analyzer_output, shared_memory,llama_llm)
+    # planner_output = plan_response["planner_output"]
+    # full_internal_dialogue += f"### Planner Agent\n{planner_output}\n\n"
 
     # Step 4: Solution Agent
-    solution_response = await solution(user_id, prompt, analyzer_output, planner_output, shared_memory,llama_llm)
+    solution_response = await solution(user_id, prompt, input_response, shared_memory,llama_llm)
     solution_output = solution_response["solution_output"]
     full_internal_dialogue += f"### Solution Agent\n{solution_output}\n\n"
 
