@@ -15,6 +15,10 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+@app.get("/")
+def index():
+    return {"message": "Hello, FastAPI!"}
+
 # dynamic path
 @app.get("/hello/{username}")
 async def hello_world(username:str):
