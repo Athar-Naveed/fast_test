@@ -1,9 +1,10 @@
 {
-  "version": 2,
+  "version": 2.0,
   "functions": {
     "server.py": {
-      "runtime": "@vercel/python",
-      "maxDuration": 60
+      "runtime": "@vercel/python@3.10",
+      "maxDuration": 60,
+      "memory":1024
     }
   },
   "routes": [
