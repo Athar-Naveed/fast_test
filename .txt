@@ -1,0 +1,58 @@
+
+async def analyze(user_id: str, prompt: str, shared_memory: dict,llama_llm):
+    from agents.analyzer_agent import AnalyzerAgent
+    analyzer_agent = AnalyzerAgent(llama_llm, shared_memory, user_id, "user_data")
+
+    # Analyze the prompt and return the result
+    analyzer_output = analyzer_agent.run(prompt, shared_memory)
+    return {"analyzer_output": analyzer_output, "shared_memory": shared_memory}
+
+
+async def plan(user_id: str, analyzer_output: str, shared_memory: dict,llama_llm):
+    from agents.planner_agent import PlannerAgent
+    planner_agent = PlannerAgent(llama_llm, shared_memory, user_id, "user_data")
+
+    # Plan based on analyzer output
+    planner_output = planner_agent.run(analyzer_output, shared_memory)
+    return {"planner_output": planner_output, "shared_memory": shared_memory}
+
+#----------------------------------------
+
+async def evaluate(user_id: str, solution_output: str, shared_memory: dict,llama_llm):
+    from agents.evaluator_agent import EvaluatorAgent
+    evaluator_agent = EvaluatorAgent(llama_llm, shared_memory, user_id, "user_data")
+
+    # Evaluate the solution
+    evaluation_status, evaluator_output = evaluator_agent.run(solution_output, shared_memory)
+    return {"evaluation_status": evaluation_status, "evaluator_output": evaluator_output, "shared_memory": shared_memory}
+
+
+async def memory(user_id: str, full_internal_dialogue: str, shared_memory: dict,llama_llm):
+    from agents.memory_agent import MemoryAgent
+    memory_agent = MemoryAgent(llama_llm, shared_memory, user_id, "user_data", f"user_data/{user_id}_profile.json")
+
+    # Update the memory with internal dialogue
+    memory_agent.run(full_internal_dialogue)
+    return {"message": "Memory updated", "shared_memory": shared_memory}
+# ------------------------------------------
+
+# Step 2: Analyzer Agent
+    # analyze_response = await analyze(user_id, prompt, shared_memory,llama_llm)
+    # analyzer_output = analyze_response["analyzer_output"]
+    # full_internal_dialogue += f"### Analyzer Agent\n{analyzer_output}\n\n"
+
+    # Step 3: Planner Agent
+    # plan_response = await plan(user_id, analyzer_output, shared_memory,llama_llm)
+    # planner_output = plan_response["planner_output"]
+    # full_internal_dialogue += f"### Planner Agent\n{planner_output}\n\n"
+# Step 5: Evaluator Agent
+    eval_response = await evaluate(user_id, solution_output, shared_memory,llama_llm)
+    evaluator_output = eval_response["evaluator_output"]
+    full_internal_dialogue += f"### Evaluator Agent\n{evaluator_output}\n\n"
+
+    if eval_response["evaluation_status"] == "REVISION_REQUESTED":
+        full_internal_dialogue += "Solution needs revision. Restarting from Solution Agent...\n\n"
+        # If revisions are requested, loop back to Solution Agent
+
+    # Step 6: Memory Agent
+    await memory(user_id, full_internal_dialogue, shared_memory,llama_llm)
