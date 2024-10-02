@@ -127,7 +127,7 @@ async def memory(user_id: str, full_internal_dialogue: str, shared_memory: dict,
     memory_agent.run(full_internal_dialogue)
     return {"message": "Memory updated", "shared_memory": shared_memory}
 
-
+@profile()
 # Parameters
 @app.post("/chat/orchestrate")
 async def orchestrate_chat(user_id: str, prompt: str):
@@ -174,7 +174,7 @@ async def orchestrate_chat(user_id: str, prompt: str):
         # If revisions are requested, loop back to Solution Agent
 
     # Step 6: Memory Agent
-    memory(user_id, full_internal_dialogue, shared_memory,llama_llm)
+    await memory(user_id, full_internal_dialogue, shared_memory,llama_llm)
 
     # Gemini model setup
     gemini_system_instructions = load_prompt_from_file(Path("prompts/gemini_prompt.txt"))
