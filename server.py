@@ -15,10 +15,16 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+# dynamic path
+@app.get("/hello/{username}")
+async def hello_world(username:str):
+    return {"message": f"Hello,{username}!"}
 
-@app.get("/hello")
-async def hello_world():
-    return {"message": "Hello, World!"}
+# Parameters
+@app.get("/hi")
+async def hi_world(username:str):
+    return {"message": f"Hello,{username}!"}
+
 
 
 if __name__ == "__main__":
